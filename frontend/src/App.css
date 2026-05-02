@@ -1,0 +1,377 @@
+/* ============================================
+   简约中式风格 — Minimalist Chinese Style
+   ============================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    'Noto Serif SC', 'Source Han Serif SC', 'STSong', 'SimSun',
+    'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+    -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(165deg, #f3eee7 0%, #ede5d8 40%, #f0eae0 100%);
+  min-height: 100vh;
+  color: #2c2c2c;
+  line-height: 1.7;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+/* ---- Main Container ---- */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  max-width: 800px;
+  width: 100%;
+  background: #fdfbf8;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04),
+              0 8px 32px rgba(120, 100, 80, 0.08);
+  padding: 28px 32px;
+  gap: 18px;
+}
+
+/* ---- Header ---- */
+.app-header {
+  text-align: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #ece8e1;
+}
+
+.app-header h1 {
+  font-size: 20px;
+  color: #2c2c2c;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+.app-desc {
+  font-size: 13px;
+  color: #999490;
+  margin-top: 4px;
+}
+
+/* ---- Upload Area ---- */
+.upload-area {
+  background: #f8f6f3;
+  border: 1.5px dashed #d7d2ca;
+  border-radius: 6px;
+  padding: 22px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.upload-area:hover,
+.upload-area.drag-over {
+  border-color: #b5aa9a;
+  background: #f3f0ea;
+}
+
+.upload-area input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.upload-hint .upload-icon {
+  font-size: 28px;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.upload-hint .upload-text {
+  font-size: 14px;
+  color: #6b6760;
+}
+
+.upload-hint .upload-sub {
+  font-size: 12px;
+  color: #b5b0a8;
+  margin-top: 2px;
+}
+
+/* ---- File List ---- */
+.file-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.file-tag {
+  background: #f8f6f3;
+  border: 1px solid #e3ded6;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: border-color 0.2s;
+}
+
+.file-tag:hover {
+  border-color: #b5aa9a;
+}
+
+.file-icon {
+  font-size: 15px;
+}
+
+.file-size {
+  color: #b5b0a8;
+  font-size: 11px;
+}
+
+.file-tag .remove {
+  cursor: pointer;
+  color: #ccc7bf;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 1;
+  transition: color 0.2s;
+  margin-left: 2px;
+}
+
+.file-tag .remove:hover {
+  color: #c43a31;
+}
+
+/* ---- Chat Window ---- */
+.chat-window {
+  flex: 1;
+  overflow-y: auto;
+  background: #faf7f2;
+  border-radius: 6px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+  border: 1px solid #ece8e1;
+}
+
+.empty-hint {
+  text-align: center;
+  margin-top: 60px;
+  color: #ccc7bf;
+}
+
+.empty-icon {
+  font-size: 44px;
+  margin-bottom: 10px;
+}
+
+.empty-hint div {
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: #b5b0a8;
+}
+
+.empty-examples {
+  color: #ccc7bf;
+  font-size: 12px;
+}
+
+.message {
+  max-width: 82%;
+  padding: 12px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  word-break: break-word;
+  animation: messageIn 0.25s ease;
+}
+
+@keyframes messageIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message.user {
+  background: #2c2c2c;
+  color: #f5f2ed;
+  align-self: flex-end;
+  border-bottom-right-radius: 2px;
+}
+
+.message.assistant {
+  background: #ffffff;
+  color: #2c2c2c;
+  align-self: flex-start;
+  border-bottom-left-radius: 2px;
+  border: 1px solid #ece8e1;
+}
+
+.message.error {
+  background: #fdf6f5;
+  color: #c43a31;
+  align-self: flex-start;
+  border: 1px solid #f3ddd9;
+}
+
+.message.loading {
+  align-self: flex-start;
+  color: #b5b0a8;
+  font-size: 14px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+/* ---- Download Card ---- */
+.download-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: #f8f6f3;
+  border: 1px solid #e3ded6;
+  border-radius: 6px;
+  animation: messageIn 0.3s ease;
+}
+
+.download-card-icon {
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.download-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.download-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2c2c2c;
+}
+
+.download-card-name {
+  font-size: 12px;
+  color: #999490;
+  margin-top: 1px;
+}
+
+.download-card-btn {
+  padding: 7px 22px;
+  background: #2c2c2c;
+  color: #f5f2ed !important;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.download-card-btn:hover {
+  background: #c43a31;
+  transform: translateY(-1px);
+}
+
+/* ---- Input Area ---- */
+.input-area {
+  display: flex;
+  gap: 10px;
+  background: #f5f1eb;
+  border-radius: 6px;
+  padding: 8px;
+  border: 1.5px solid #e3ded6;
+  transition: border-color 0.25s;
+}
+
+.input-area:focus-within {
+  border-color: #b5aa9a;
+}
+
+.input-area input {
+  flex: 1;
+  border: none;
+  border-radius: 4px;
+  padding: 9px 14px;
+  font-size: 14px;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  color: #2c2c2c;
+}
+
+.input-area input::placeholder {
+  color: #ccc7bf;
+}
+
+.input-area button {
+  background: #2c2c2c;
+  color: #f5f2ed;
+  border: none;
+  border-radius: 4px;
+  padding: 9px 22px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+  white-space: nowrap;
+  letter-spacing: 1px;
+}
+
+.input-area button:hover:not(:disabled) {
+  background: #c43a31;
+}
+
+.input-area button:disabled {
+  background: #d7d2ca;
+  color: #f5f2ed;
+  cursor: not-allowed;
+}
+
+/* ---- Status Bar ---- */
+.status-bar {
+  font-size: 12px;
+  color: #ccc7bf;
+  text-align: center;
+  padding-top: 2px;
+}
+
+/* ---- Scrollbar ---- */
+.chat-window::-webkit-scrollbar {
+  width: 5px;
+}
+
+.chat-window::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-window::-webkit-scrollbar-thumb {
+  background: #d7d2ca;
+  border-radius: 3px;
+}
+
+.chat-window::-webkit-scrollbar-thumb:hover {
+  background: #b5b0a8;
+}
