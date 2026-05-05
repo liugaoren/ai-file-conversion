@@ -20,6 +20,16 @@ export default function ChatUI({ messages, loading }: Props) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
+  // Clean displayed text: remove internal markers, raw URLs, old FILE_ID tokens
+  function cleanContent(content: string): string {
+    return content
+      .replace(/__DOWNLOAD__:[a-f0-9-]+/gi, '')
+      .replace(/\[FILE_ID:[a-f0-9-]+]/gi, '')
+      .replace(/https?:\/\/[^\s]*\/api\/files\/download\/[a-f0-9-]+/gi, '')
+      .replace(/\/api\/files\/download\/[a-f0-9-]+/gi, '')
+      .trim();
+  }
+
   return (
     <div className="chat-window">
       {messages.length === 0 && !loading && (
@@ -41,7 +51,7 @@ export default function ChatUI({ messages, loading }: Props) {
               <div className="assistant-text">
                 {msg.isHtml
                   ? <div dangerouslySetInnerHTML={{ __html: msg.content }} />
-                  : msg.content}
+                  : cleanContent(msg.content)}
               </div>
 
               {msg.fileUrl && (

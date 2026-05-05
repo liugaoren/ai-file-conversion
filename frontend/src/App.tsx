@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { FileInfo, chatStream } from './services/api';
 import FileUploader from './components/FileUploader';
 import ChatUI, { Message } from './components/ChatUI';
@@ -9,28 +9,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState('');
   const abortRef = useRef<AbortController | null>(null);
-
-  // Detect download URLs in completed assistant messages
-  useEffect(() => {
-    if (!loading && messages.length > 0) {
-      const last = messages[messages.length - 1];
-      if (last.role === 'assistant' && !last.fileUrl && !last.isHtml) {
-        const regex = /\/api\/files\/download\/([a-f0-9-]+)/i;
-        const match = last.content.match(regex);
-        if (match) {
-          setMessages(prev => {
-            const updated = [...prev];
-            updated[updated.length - 1] = {
-              ...updated[updated.length - 1],
-              fileUrl: `/api/files/download/${match[1]}`,
-              fileName: '转换后的文件',
-            };
-            return updated;
-          });
-        }
-      }
-    }
-  }, [loading]);
+  const streamContentRef = useRef('');
 
   const handleFilesUploaded = useCallback((files: FileInfo[]) => {
     setUploadedFiles(prev => [...prev, ...files]);
@@ -52,9 +31,11 @@ export default function App() {
 
     setMessages(prev => [...prev, userMsg, assistantMsg]);
 
+    streamContentRef.current = '';
     abortRef.current = chatStream(
       { message: text, fileIds: uploadedFiles.map(f => f.id) },
       (chunk) => {
+        streamContentRef.current += chunk;
         setMessages(prev => {
           const updated = [...prev];
           const last = updated[updated.length - 1];
@@ -72,6 +53,24 @@ export default function App() {
         setLoading(false);
       },
       () => {
+        // Stream done: extract download marker from accumulated content
+        const match = streamContentRef.current.match(/__DOWNLOAD__:([a-f0-9-]+)/i);
+        if (match) {
+          const fileId = match[1];
+          setMessages(prev => {
+            const updated = [...prev];
+            const last = updated[updated.length - 1];
+            if (last.role === 'assistant') {
+              updated[updated.length - 1] = {
+                ...last,
+                fileUrl: `/api/files/download/${fileId}`,
+                fileName: '转换后的文件',
+              };
+            }
+            return updated;
+          });
+        }
+        streamContentRef.current = '';
         setLoading(false);
       }
     );

@@ -84,18 +84,17 @@ export function chatStream(
         buffer = parts.pop() || '';
 
         for (const part of parts) {
-          const line = part.trim();
-          if (!line) continue;
-
-          // 提取 data: 后面的内容
-          let data = '';
-          if (line.startsWith('data:')) {
-            data = line.slice(5).trim();
-          } else if (line.startsWith('event:') || line.startsWith('id:')) {
-            continue; // skip metadata
-          } else {
-            data = line; // try raw
+          // 每个 SSE event 可能包含多行 data:（Spring WebFlux 用多行 data: 编码换行）
+          const lines = part.split('\n');
+          const dataLines: string[] = [];
+          for (const l of lines) {
+            const trimmed = l.trim();
+            if (trimmed.startsWith('data:')) {
+              dataLines.push(trimmed.slice(5));
+            }
+            // event:/id: 等元数据行直接跳过
           }
+          let data = dataLines.join('\n').trim();
 
           if (!data || data === '[DONE]') continue;
 

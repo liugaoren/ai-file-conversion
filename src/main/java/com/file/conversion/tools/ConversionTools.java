@@ -40,8 +40,9 @@ public class ConversionTools {
 
         ConversionResult result = conversionService.convert(fileInfo, targetFormat);
         if (result.isSuccess()) {
-            return "Conversion successful! File: " + result.getFileName()
-                    + "\nDownload URL: " + result.getDownloadUrl()
+            String dlFileId = result.getDownloadUrl().substring(
+                    result.getDownloadUrl().lastIndexOf('/') + 1);
+            return "__DOWNLOAD__:" + dlFileId + "\nConversion successful! File: " + result.getFileName()
                     + (result.getPreviewContent() != null ? "\n\nPreview:\n" + result.getPreviewContent() : "");
         } else {
             return "Conversion failed: " + result.getErrorMessage();
@@ -70,8 +71,15 @@ public class ConversionTools {
 
         ConversionResult result = batchConversionService.batchConvertAndZip(files, targetFormat);
         if (result.isSuccess()) {
-            return result.getPreviewContent() != null ? result.getPreviewContent()
-                    : "Batch conversion complete! Download ZIP: " + result.getDownloadUrl();
+            String marker = "";
+            if (result.getDownloadUrl() != null) {
+                String dlFileId = result.getDownloadUrl().substring(
+                        result.getDownloadUrl().lastIndexOf('/') + 1);
+                marker = "__DOWNLOAD__:" + dlFileId + "\n";
+            }
+            return marker + (result.getPreviewContent() != null ? result.getPreviewContent()
+                    : "Batch conversion complete! Download ZIP: /api/files/download/" + (result.getDownloadUrl() != null
+                            ? result.getDownloadUrl().substring(result.getDownloadUrl().lastIndexOf('/') + 1) : "unknown"));
         } else {
             return "Batch conversion failed: " + result.getErrorMessage();
         }

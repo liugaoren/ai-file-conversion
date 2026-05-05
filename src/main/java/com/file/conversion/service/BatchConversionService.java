@@ -73,7 +73,7 @@ public class BatchConversionService {
                         .append(r.isSuccess() ? "" : ": " + r.getErrorMessage())
                         .append("\n");
             }
-            summary.append("\nDownload ZIP: /api/files/download/").append(zipInfo.getId());
+            summary.append("\n[FILE_ID:").append(zipInfo.getId()).append("]");
 
             return ConversionResult.builder()
                     .success(true)

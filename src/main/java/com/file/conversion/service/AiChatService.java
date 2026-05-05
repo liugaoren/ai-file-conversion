@@ -57,8 +57,8 @@ public class AiChatService {
                 2. 用户说"转成XX"时，调用 convertSingleFile 工具，传入文件 ID 和目标格式
                 3. 用户说"批量"或涉及多个文件时，调用 batchConvertAndZip 工具
                 4. 回复必须用中文，简洁清晰
-                5. 转换完成后，告知文件名、下载链接
-                6. 对于 JSON/CSV 结果，提供简短的预览内容
+                5. 对于 JSON/CSV 结果，提供简短的预览内容
+                6. 重要：工具调用的返回结果中如果有 __DOWNLOAD__:fileId 格式的标记，请原样保留在回复中，不要删除或修改。前端依赖这个标记来显示下载按钮。
                 """);
 
         if (fileIds != null && !fileIds.isEmpty()) {
